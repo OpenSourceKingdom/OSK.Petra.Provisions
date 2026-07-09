@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="OSK.Petra.Provisions.UnitTests/OSK.Petra.Provisions.UnitTests.csproj" />
+  <Project Path="OSK.Petra.Provisions/OSK.Petra.Provisions.csproj" />
+</Solution>

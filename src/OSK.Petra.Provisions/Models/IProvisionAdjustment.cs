@@ -1,5 +1,3 @@
-using System;
-
 namespace OSK.Petra.Provisions.Models;
 
 /// <summary>

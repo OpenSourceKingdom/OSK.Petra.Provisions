@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using OSK.Petra.Provisions.Models;
@@ -76,7 +75,7 @@ public static class ProvisionCalculator
     /// <param name="adjustment">The flat adjustment</param>
     /// <returns>The recovery information</returns>
     public static ProvisionRecoverySummary CalculateFlatAdjustmentRecovery(IEnumerable<Provision> provisions, float adjustment)
-        => CalculateRecovery(provisions, provisions.Select(provision => (IProvisionAdjustment) new ProvisionFlatAdjustment(adjustment)));
+        => CalculateRecovery(provisions, [new ProvisionFlatAdjustment(adjustment)]);
 
     /// <summary>
     /// Calculates a provision recovery, utilizing a global percentage adjustment 
@@ -85,7 +84,7 @@ public static class ProvisionCalculator
     /// <param name="adjustment">The percentage adjustment</param>
     /// <returns>The recovery information</returns>
     public static ProvisionRecoverySummary CalculatePercentageAdjustmentRecovery(IEnumerable<Provision> provisions, float adjustment)
-        => CalculateRecovery(provisions, provisions.Select(provision => (IProvisionAdjustment) new ProvisionPercentageAdjustment(adjustment)));
+        => CalculateRecovery(provisions, [new ProvisionPercentageAdjustment(adjustment)]);
 
     /// <summary>
     /// Calculates a provision recovery, utilizing the provided provision colelction as the basis for the recovery calculation 

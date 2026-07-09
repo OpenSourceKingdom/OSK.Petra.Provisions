@@ -65,6 +65,12 @@ public readonly struct Provision
     public static Provision operator +(float amount, Provision provision)
         => provision.WithAmount(provision.Amount + amount);
 
+    public static Provision operator -(Provision provision, float amount)
+        => provision.WithAmount(provision.Amount - amount);
+
+    public static Provision operator -(float amount, Provision provision)
+        => provision.WithAmount(provision.Amount - amount);
+
     public static Provision operator *(Provision provision, float amount)
         => provision.WithAmount(provision.Amount * amount);
 

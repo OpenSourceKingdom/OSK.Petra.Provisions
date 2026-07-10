@@ -4,6 +4,9 @@ using OSK.Petra.Provisions.Models;
 
 namespace OSK.Petra.Provisions;
 
+/// <summary>
+/// Performs provision based math and similar comparisons to return summaries and other valuable information to callers about the state of a potential provisional transaction
+/// </summary>
 public static class ProvisionCalculator
 {
     #region Expenditure
@@ -74,17 +77,17 @@ public static class ProvisionCalculator
     /// <param name="provisions">The collection of provisions used to determine a recovery from</param>
     /// <param name="adjustment">The flat adjustment</param>
     /// <returns>The recovery information</returns>
-    public static ProvisionRecoverySummary CalculateFlatAdjustmentRecovery(IEnumerable<Provision> provisions, float adjustment)
-        => CalculateRecovery(provisions, [new ProvisionFlatAdjustment(adjustment)]);
+    public static ProvisionRecoverySummary CalculateAdditiveAdjustedRecovery(IEnumerable<Provision> provisions, float adjustment)
+        => CalculateRecovery(provisions, [new AdditiveAdjustment(adjustment)]);
 
     /// <summary>
-    /// Calculates a provision recovery, utilizing a global percentage adjustment 
+    /// Calculates a provision recovery, utilizing a global multiplier adjustment 
     /// </summary>1
     /// <param name="provisions">The collection of provisions used to determine a recovery from</param>
-    /// <param name="adjustment">The percentage adjustment</param>
+    /// <param name="adjustment">The multiplier adjustment</param>
     /// <returns>The recovery information</returns>
-    public static ProvisionRecoverySummary CalculatePercentageAdjustmentRecovery(IEnumerable<Provision> provisions, float adjustment)
-        => CalculateRecovery(provisions, [new ProvisionPercentageAdjustment(adjustment)]);
+    public static ProvisionRecoverySummary CalculateMultiplierAdjustedRecovery(IEnumerable<Provision> provisions, float adjustment)
+        => CalculateRecovery(provisions, [new MultiplierAdjustment(adjustment)]);
 
     /// <summary>
     /// Calculates a provision recovery, utilizing the provided provision colelction as the basis for the recovery calculation 

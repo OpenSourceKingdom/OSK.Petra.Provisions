@@ -13,7 +13,7 @@ namespace OSK.Petra.Provisions.Models;
 /// </remarks>
 /// <param name="adjustment">The flat adjustment to use</param>
 /// <param name="provisionFilter">A filter that cna be applied to limit the total number of provisions adjusted by this flat adjustment</param>11
-public readonly struct ProvisionFlatAdjustment(float adjustment, Guid[]? provisionFilter = null): IProvisionAdjustment
+public readonly struct AdditiveAdjustment(float adjustment, Guid[]? provisionFilter = null): IProvisionAdjustment
 {
     #region IProvisionAdjustment
 

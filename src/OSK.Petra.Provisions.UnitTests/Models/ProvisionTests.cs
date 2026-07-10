@@ -12,14 +12,6 @@ public class ProvisionTests
 
     #region Constructors
 
-    public ProvisionTests()
-    {
-    }
-
-    #endregion
-
-    #region Constructor_WithIdOnly
-
     [Fact]
     public void Constructor_WithIdOnly_SetsAmountToZero()
     {
@@ -30,10 +22,6 @@ public class ProvisionTests
         Assert.Equal(_testId, provision.Id);
         Assert.Equal(0f, provision.Amount);
     }
-
-    #endregion
-
-    #region Constructor_WithIdAndAmount
 
     [Theory]
     [InlineData(100f)]
@@ -55,20 +43,6 @@ public class ProvisionTests
     #region WithAmount
 
     [Fact]
-    public void WithAmount_ValidId_ReturnsNewProvisionWithSameId()
-    {
-        // Arrange
-        var provision = new Provision(_testId, 50f);
-
-        // Act
-        var result = provision.WithAmount(75f);
-
-        // Assert
-        Assert.Equal(_testId, result.Id);
-        Assert.Equal(75f, result.Amount);
-    }
-
-    [Fact]
     public void WithAmount_OriginalProvisionUnchanged_ReturnsDifferentInstance()
     {
         // Arrange
@@ -78,7 +52,9 @@ public class ProvisionTests
         var result = provision.WithAmount(75f);
 
         // Assert
-        Assert.Equal(50f, provision.Amount);
+        Assert.Equal(_testId, result.Id);
+        Assert.Equal(50, provision.Amount);
+        Assert.Equal(75, result.Amount);
     }
 
     #endregion
@@ -101,10 +77,6 @@ public class ProvisionTests
         Assert.Equal(_testId, result.Id);
         Assert.Equal(expected, result.Amount);
     }
-
-    #endregion
-
-    #region Addition_AmountAndProvision
 
     [Theory]
     [InlineData(50f, 100f, 150f)]
@@ -144,6 +116,23 @@ public class ProvisionTests
         Assert.Equal(expected, result.Amount);
     }
 
+    [Theory]
+    [InlineData(100f, 30f, 70f)]
+    [InlineData(100f, -20, 120)]
+    [InlineData(50f, 50f, 0f)]
+    public void Subtraction_AmountMinusProvision_ReturnsProvisionWithReducedAmount(float amount1, float amount2, float expected)
+    {
+        // Arrange
+        var provision = new Provision(_testId, amount2);
+
+        // Act
+        var result = amount1 - provision;
+
+        // Assert
+        Assert.Equal(_testId, result.Id);
+        Assert.Equal(expected, result.Amount);
+    }
+
     #endregion
 
     #region Multiplication_ProvisionTimesAmount
@@ -164,10 +153,6 @@ public class ProvisionTests
         Assert.Equal(_testId, result.Id);
         Assert.Equal(expected, result.Amount);
     }
-
-    #endregion
-
-    #region Multiplication_AmountTimesProvision
 
     [Theory]
     [InlineData(3f, 10f, 30f)]

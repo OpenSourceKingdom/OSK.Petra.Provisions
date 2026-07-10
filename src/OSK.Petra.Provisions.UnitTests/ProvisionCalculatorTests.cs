@@ -12,18 +12,10 @@ public class ProvisionCalculatorTests
 
     #endregion
 
-    #region Constructors
-
-    public ProvisionCalculatorTests()
-    {
-    }
-
-    #endregion
-
-    #region CalculateExpenditure_IEnumerable
+    #region CalculateExpenditure
 
     [Fact]
-    public void CalculateExpenditure_ValidMatchingProvisions_ReturnsCorrectDetails()
+    public void CalculateExpenditure_IEnumerable_ValidMatchingProvisions_ReturnsCorrectDetails()
     {
         // Arrange
         var required = new[] { new Provision(_id1, 100f), new Provision(_id2, 200f) };
@@ -43,7 +35,7 @@ public class ProvisionCalculatorTests
     }
 
     [Fact]
-    public void CalculateExpenditure_PartialMatch_ReturnsMatchingAndInsufficientDetails()
+    public void CalculateExpenditure_IEnumerable_PartialMatch_ReturnsMatchingAndInsufficientDetails()
     {
         // Arrange
         var required = new[] { new Provision(_id1, 100f), new Provision(_id2, 200f), new Provision(_id3, 50f) };
@@ -67,7 +59,7 @@ public class ProvisionCalculatorTests
     }
 
     [Fact]
-    public void CalculateExpenditure_EmptyRequired_ReturnsEmptySummary()
+    public void CalculateExpenditure_IEnumerable_NoProvisionsRequired_ReturnsEmptySummary()
     {
         // Arrange
         var required = Array.Empty<Provision>();
@@ -78,10 +70,11 @@ public class ProvisionCalculatorTests
 
         // Assert
         Assert.True(result.Sufficient);
+        Assert.Empty(result.Details);
     }
 
     [Fact]
-    public void CalculateExpenditure_EmptyProvided_ReturnsEmptySummary()
+    public void CalculateExpenditure_IEnumerable_NoProvisionsProvided_ReturnsExpectedSummary()
     {
         // Arrange
         var required = new[] { new Provision(_id1, 100f) };
@@ -96,7 +89,7 @@ public class ProvisionCalculatorTests
     }
 
     [Fact]
-    public void CalculateExpenditure_MultipleProvisionsSameId_GroupsAndSumsCorrectly()
+    public void CalculateExpenditure_IEnumerable_MultipleProvisionsSameId_GroupsAndSumsCorrectly()
     {
         // Arrange
         var required = new[] { new Provision(_id1, 50f), new Provision(_id1, 50f) };
@@ -113,23 +106,19 @@ public class ProvisionCalculatorTests
         Assert.Equal(110f, detail.ProvidedAmount);
     }
 
-    #endregion
-
-    #region CalculateExpenditure_Term
-
     [Fact]
     public void CalculateExpenditure_Term_ValidProvisionsWithAdjustments_AppliesAdjustmentsToBothSides()
     {
         // Arrange
         var requiredTerm = new ProvisionTerm
         {
-            Provisions = new[] { new Provision(_id1, 100f) },
-            Adjustments = new IProvisionAdjustment[] { new ProvisionFlatAdjustment(50f) }
+            Provisions = [new Provision(_id1, 100f)],
+            Adjustments = [new AdditiveAdjustment(50f)]
         };
         var providedTerm = new ProvisionTerm
         {
-            Provisions = new[] { new Provision(_id1, 80f) },
-            Adjustments = new IProvisionAdjustment[] { new ProvisionPercentageAdjustment(2f) }
+            Provisions = [new Provision(_id1, 80f)],
+            Adjustments = [new MultiplierAdjustment(2f)]
         };
 
         // Act
@@ -149,13 +138,13 @@ public class ProvisionCalculatorTests
         // Arrange
         var requiredTerm = new ProvisionTerm
         {
-            Provisions = new[] { new Provision(_id1, 100f) },
-            Adjustments = null
+            Provisions = [new Provision(_id1, 100f)],
+            Adjustments = null!
         };
         var providedTerm = new ProvisionTerm
         {
-            Provisions = new[] { new Provision(_id1, 120f) },
-            Adjustments = null
+            Provisions = [new Provision(_id1, 120f)],
+            Adjustments = null!
         };
 
         // Act
@@ -170,19 +159,19 @@ public class ProvisionCalculatorTests
 
     #endregion
 
-    #region CalculateFlatAdjustmentRecovery
+    #region CalculateAdditiveAdjustedRecovery
 
     [Theory]
     [InlineData(100, 50)]
     [InlineData(100, -30)]
     [InlineData(100, 0)]
-    public void CalculateFlatAdjustmentRecovery_ValidProvisions_ReturnsAdjustedRecovery(float baseAmount, float adjustment)
+    public void CalculateAdditiveAdjustedRecovery_ValidProvisions_ReturnsAdjustedRecovery(float baseAmount, float adjustment)
     {
         // Arrange
         var provisions = new[] { new Provision(_id1, baseAmount), new Provision(_id2, baseAmount) };
 
         // Act
-        var result = ProvisionCalculator.CalculateFlatAdjustmentRecovery(provisions, adjustment);
+        var result = ProvisionCalculator.CalculateAdditiveAdjustedRecovery(provisions, adjustment);
 
         // Assert
         var recovered = result.RecoveredProvisions.ToDictionary(p => p.Id);
@@ -191,13 +180,13 @@ public class ProvisionCalculatorTests
     }
 
     [Fact]
-    public void CalculateFlatAdjustmentRecovery_EmptyProvisions_ReturnsEmptyRecovery()
+    public void CalculateAdditiveAdjustedRecovery_EmptyProvisions_ReturnsEmptyRecovery()
     {
         // Arrange
         var provisions = Array.Empty<Provision>();
 
         // Act
-        var result = ProvisionCalculator.CalculateFlatAdjustmentRecovery(provisions, 50f);
+        var result = ProvisionCalculator.CalculateAdditiveAdjustedRecovery(provisions, 50f);
 
         // Assert
         Assert.Empty(result.RecoveredProvisions);
@@ -205,34 +194,34 @@ public class ProvisionCalculatorTests
 
     #endregion
 
-    #region CalculatePercentageAdjustmentRecovery
+    #region CalculateMultiplierAdjustedRecovery
 
     [Theory]
     [InlineData(100f, 1.5f)]
     [InlineData(100f, 0.5f)]
     [InlineData(100f, -1f)]
-    public void CalculatePercentageAdjustmentRecovery_ValidProvisions_ReturnsAdjustedRecovery(float baseAmount, float percentage)
+    public void CalculateMultiplierAdjustedRecovery_ValidProvisions_ReturnsAdjustedRecovery(float baseAmount, float multiplier)
     {
         // Arrange
         var provisions = new[] { new Provision(_id1, baseAmount), new Provision(_id2, baseAmount) };
 
         // Act
-        var result = ProvisionCalculator.CalculatePercentageAdjustmentRecovery(provisions, percentage);
+        var result = ProvisionCalculator.CalculateMultiplierAdjustedRecovery(provisions, multiplier);
 
         // Assert
         var recovered = result.RecoveredProvisions.ToDictionary(p => p.Id);
-        Assert.Equal(baseAmount * percentage, recovered[_id1].Amount);
-        Assert.Equal(baseAmount * percentage, recovered[_id2].Amount);
+        Assert.Equal(baseAmount * multiplier, recovered[_id1].Amount);
+        Assert.Equal(baseAmount * multiplier, recovered[_id2].Amount);
     }
 
     [Fact]
-    public void CalculatePercentageAdjustmentRecovery_PercentageOnePointZero_ReturnsOriginalAmounts()
+    public void CalculateMultiplierAdjustedRecovery_MultiplyOne_ReturnsOriginalAmounts()
     {
         // Arrange
         var provisions = new[] { new Provision(_id1, 100f), new Provision(_id2, 200f) };
 
         // Act
-        var result = ProvisionCalculator.CalculatePercentageAdjustmentRecovery(provisions, 1f);
+        var result = ProvisionCalculator.CalculateMultiplierAdjustedRecovery(provisions, 1f);
 
         // Assert
         var recovered = result.RecoveredProvisions.ToDictionary(p => p.Id);
@@ -241,13 +230,13 @@ public class ProvisionCalculatorTests
     }
 
     [Fact]
-    public void CalculatePercentageAdjustmentRecovery_PercentageZero_ReturnsZeroAmounts()
+    public void CalculateMultiplierAdjustedRecovery_MultiplyZero_ReturnsZeroAmounts()
     {
         // Arrange
         var provisions = new[] { new Provision(_id1, 100f) };
 
         // Act
-        var result = ProvisionCalculator.CalculatePercentageAdjustmentRecovery(provisions, 0f);
+        var result = ProvisionCalculator.CalculateMultiplierAdjustedRecovery(provisions, 0f);
 
         // Assert
         var recovered = result.RecoveredProvisions.First();
@@ -290,8 +279,8 @@ public class ProvisionCalculatorTests
         var provisions = new[] { new Provision(_id1, 100f) };
         var adjustments = new IProvisionAdjustment[]
         {
-            new ProvisionFlatAdjustment(50f),
-            new ProvisionPercentageAdjustment(0.5f)
+            new AdditiveAdjustment(50f),
+            new MultiplierAdjustment(0.5f)
         };
 
         // Act

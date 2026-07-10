@@ -2,7 +2,7 @@ using OSK.Petra.Provisions.Models;
 
 namespace OSK.Petra.Provisions.UnitTests.Models;
 
-public class ProvisionFlatAdjustmentTests
+public class AdditiveAdjustmentTests
 {
     #region Variables
 
@@ -11,21 +11,13 @@ public class ProvisionFlatAdjustmentTests
 
     #endregion
 
-    #region Constructors
-
-    public ProvisionFlatAdjustmentTests()
-    {
-    }
-
-    #endregion
-
-    #region ApplyAdjustment_NullFilter
+    #region ApplyAdjustment
 
     [Fact]
     public void ApplyAdjustment_NullFilter_AdjustsAllProvisions()
     {
         // Arrange
-        var adjustment = new ProvisionFlatAdjustment(50f, null);
+        var adjustment = new AdditiveAdjustment(50f, null);
         var provision = new Provision(_matchedId, 100f);
 
         // Act
@@ -35,16 +27,12 @@ public class ProvisionFlatAdjustmentTests
         Assert.Equal(_matchedId, result.Id);
         Assert.Equal(150f, result.Amount);
     }
-
-    #endregion
-
-    #region ApplyAdjustment_EmptyFilter
 
     [Fact]
     public void ApplyAdjustment_EmptyFilter_AdjustsAllProvisions()
     {
         // Arrange
-        var adjustment = new ProvisionFlatAdjustment(50f, Array.Empty<Guid>());
+        var adjustment = new AdditiveAdjustment(50f, []);
         var provision = new Provision(_matchedId, 100f);
 
         // Act
@@ -55,16 +43,12 @@ public class ProvisionFlatAdjustmentTests
         Assert.Equal(150f, result.Amount);
     }
 
-    #endregion
-
-    #region ApplyAdjustment_MatchingFilter
-
     [Fact]
-    public void ApplyAdjustment_MatchingFilter_AdjustsOnlyMatchingProvision()
+    public void ApplyAdjustment_ProvisionFilterSet_AdjustsOnlyMatchingProvision()
     {
         // Arrange
         var filter = new[] { _matchedId };
-        var adjustment = new ProvisionFlatAdjustment(50f, filter);
+        var adjustment = new AdditiveAdjustment(50f, filter);
         var matched = new Provision(_matchedId, 100f);
         var unmatched = new Provision(_unmatchedId, 100f);
 
@@ -77,49 +61,13 @@ public class ProvisionFlatAdjustmentTests
         Assert.Equal(100f, unmatchedResult.Amount);
     }
 
-    #endregion
-
-    #region ApplyAdjustment_NonMatchingFilter
-
-    [Fact]
-    public void ApplyAdjustment_NonMatchingFilter_LeavesProvisionUnchanged()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public void ApplyAdjustment_NegativeAdjustment_EmpyFilter_ReducesAmountCorrectly(bool useNull)
     {
         // Arrange
-        var filter = new[] { _unmatchedId };
-        var adjustment = new ProvisionFlatAdjustment(50f, filter);
-        var provision = new Provision(_matchedId, 100f);
-
-        // Act
-        var result = adjustment.ApplyAdjustment(provision);
-
-        // Assert
-        Assert.Equal(_matchedId, result.Id);
-        Assert.Equal(100f, result.Amount);
-    }
-
-    #endregion
-
-    #region ApplyAdjustment_NegativeAdjustment
-
-    [Fact]
-    public void ApplyAdjustment_NegativeAdjustment_NullFilter_ReducesAmountCorrectly()
-    {
-        // Arrange
-        var adjustment = new ProvisionFlatAdjustment(-30f, null);
-        var provision = new Provision(_matchedId, 100f);
-
-        // Act
-        var result = adjustment.ApplyAdjustment(provision);
-
-        // Assert
-        Assert.Equal(70f, result.Amount);
-    }
-
-    [Fact]
-    public void ApplyAdjustment_NegativeAdjustment_EmptyFilter_ReducesAmountCorrectly()
-    {
-        // Arrange
-        var adjustment = new ProvisionFlatAdjustment(-30f, Array.Empty<Guid>());
+        var adjustment = new AdditiveAdjustment(-30f, useNull ? null : []);
         var provision = new Provision(_matchedId, 100f);
 
         // Act
@@ -134,7 +82,7 @@ public class ProvisionFlatAdjustmentTests
     {
         // Arrange
         var filter = new[] { _matchedId };
-        var adjustment = new ProvisionFlatAdjustment(-30f, filter);
+        var adjustment = new AdditiveAdjustment(-30f, filter);
         var provision = new Provision(_matchedId, 100f);
 
         // Act

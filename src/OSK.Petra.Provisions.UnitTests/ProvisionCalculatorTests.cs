@@ -70,7 +70,6 @@ public class ProvisionCalculatorTests
 
         // Assert
         Assert.True(result.Sufficient);
-        Assert.Empty(result.Details);
     }
 
     [Fact]

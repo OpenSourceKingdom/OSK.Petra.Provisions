@@ -25,9 +25,9 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateExpenditure(required, provided);
 
         // Assert
-        Assert.Equal(2, result.Details.Count());
-        var detail1 = result.Details.First(d => d.Id == _id1);
-        var detail2 = result.Details.First(d => d.Id == _id2);
+        Assert.Equal(2, result.Details.Values.Count());
+        var detail1 = result.Details.Values.First(d => d.Id == _id1);
+        var detail2 = result.Details.Values.First(d => d.Id == _id2);
         Assert.False(detail1.Sufficient);
         Assert.True(detail2.Sufficient);
         Assert.Equal(20f, detail1.OutstandingAmount);
@@ -45,11 +45,11 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateExpenditure(required, provided);
 
         // Assert
-        Assert.Equal(3, result.Details.Count());
+        Assert.Equal(3, result.Details.Values.Count());
 
-        var matched = result.Details.First(d => d.Id == _id1);
-        var unmatched1 = result.Details.First(d => d.Id == _id2);
-        var unmatched2 = result.Details.First(d => d.Id == _id3);
+        var matched = result.Details.Values.First(d => d.Id == _id1);
+        var unmatched1 = result.Details.Values.First(d => d.Id == _id2);
+        var unmatched2 = result.Details.Values.First(d => d.Id == _id3);
 
         Assert.True(matched.Sufficient);
         Assert.False(unmatched1.Sufficient);
@@ -98,7 +98,7 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateExpenditure(required, provided);
 
         // Assert
-        var detail = result.Details.First();
+        var detail = result.Details.Values.First();
         Assert.Equal(_id1, detail.Id);
         Assert.True(detail.Sufficient);
         Assert.Equal(100f, detail.RequiredAmount);
@@ -124,7 +124,7 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateExpenditure(requiredTerm, providedTerm);
 
         // Assert
-        var detail = result.Details.First();
+        var detail = result.Details.Values.First();
         Assert.Equal(_id1, detail.Id);
         Assert.True(detail.Sufficient);
         Assert.Equal(150f, detail.RequiredAmount);
@@ -150,7 +150,7 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateExpenditure(requiredTerm, providedTerm);
 
         // Assert
-        var detail = result.Details.First();
+        var detail = result.Details.Values.First();
         Assert.True(detail.Sufficient);
         Assert.Equal(100f, detail.RequiredAmount);
         Assert.Equal(120f, detail.ProvidedAmount);
@@ -173,9 +173,8 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateAdditiveAdjustedRecovery(provisions, adjustment);
 
         // Assert
-        var recovered = result.RecoveredProvisions.ToDictionary(p => p.Id);
-        Assert.Equal(baseAmount + adjustment, recovered[_id1].Amount);
-        Assert.Equal(baseAmount + adjustment, recovered[_id2].Amount);
+        Assert.Equal(baseAmount + adjustment, result.RecoveredProvisions[_id1].Amount);
+        Assert.Equal(baseAmount + adjustment, result.RecoveredProvisions[_id2].Amount);
     }
 
     [Fact]
@@ -208,9 +207,8 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateMultiplierAdjustedRecovery(provisions, multiplier);
 
         // Assert
-        var recovered = result.RecoveredProvisions.ToDictionary(p => p.Id);
-        Assert.Equal(baseAmount * multiplier, recovered[_id1].Amount);
-        Assert.Equal(baseAmount * multiplier, recovered[_id2].Amount);
+        Assert.Equal(baseAmount * multiplier, result.RecoveredProvisions[_id1].Amount);
+        Assert.Equal(baseAmount * multiplier, result.RecoveredProvisions[_id2].Amount);
     }
 
     [Fact]
@@ -223,9 +221,8 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateMultiplierAdjustedRecovery(provisions, 1f);
 
         // Assert
-        var recovered = result.RecoveredProvisions.ToDictionary(p => p.Id);
-        Assert.Equal(100f, recovered[_id1].Amount);
-        Assert.Equal(200f, recovered[_id2].Amount);
+        Assert.Equal(100f, result.RecoveredProvisions[_id1].Amount);
+        Assert.Equal(200f, result.RecoveredProvisions[_id2].Amount);
     }
 
     [Fact]
@@ -238,7 +235,7 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateMultiplierAdjustedRecovery(provisions, 0f);
 
         // Assert
-        var recovered = result.RecoveredProvisions.First();
+        var recovered = result.RecoveredProvisions.Values.First();
         Assert.Equal(0f, recovered.Amount);
     }
 
@@ -266,9 +263,8 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateRecovery(provisions, Array.Empty<IProvisionAdjustment>());
 
         // Assert
-        var recovered = result.RecoveredProvisions.ToDictionary(p => p.Id);
-        Assert.Equal(100f, recovered[_id1].Amount);
-        Assert.Equal(200f, recovered[_id2].Amount);
+        Assert.Equal(100f, result.RecoveredProvisions[_id1].Amount);
+        Assert.Equal(200f, result.RecoveredProvisions[_id2].Amount);
     }
 
     [Fact]
@@ -286,7 +282,7 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateRecovery(provisions, adjustments);
 
         // Assert
-        var recovered = result.RecoveredProvisions.First();
+        var recovered = result.RecoveredProvisions.Values.First();
         Assert.Equal(_id1, recovered.Id);
         Assert.Equal(75f, recovered.Amount);
     }
@@ -305,7 +301,7 @@ public class ProvisionCalculatorTests
         var result = ProvisionCalculator.CalculateRecovery(provisions, Array.Empty<IProvisionAdjustment>());
 
         // Assert
-        var recovered = result.RecoveredProvisions.First();
+        var recovered = result.RecoveredProvisions.Values.First();
         Assert.Equal(_id1, recovered.Id);
         Assert.Equal(100f, recovered.Amount);
     }

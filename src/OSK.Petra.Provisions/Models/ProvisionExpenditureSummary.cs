@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -28,7 +29,7 @@ public class ProvisionExpenditureSummary(IEnumerable<ProvisionExpenseDetail> det
     /// <summary>
     /// The individual summaries that make up the expenditure summary
     /// </summary>
-    public IReadOnlyList<ProvisionExpenseDetail> Details { get; } = details?.ToArray() ?? [];
+    public IReadOnlyDictionary<Guid, ProvisionExpenseDetail> Details { get; } = details?.ToDictionary(detail => detail.Id) ?? [];
 
     #endregion
 }

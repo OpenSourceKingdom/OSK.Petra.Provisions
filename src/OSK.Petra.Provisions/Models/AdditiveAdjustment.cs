@@ -6,6 +6,7 @@ namespace OSK.Petra.Provisions.Models;
 /// <summary>
 /// Create a flat adjustment for a expenditure or recovery calculation
 /// </summary>
+/// <remarks>
 /// 💡Notes:
 /// <list type="bullet">
 /// <item>A null or empty filter will result in the adjustment being applied to ALL provisions</item>

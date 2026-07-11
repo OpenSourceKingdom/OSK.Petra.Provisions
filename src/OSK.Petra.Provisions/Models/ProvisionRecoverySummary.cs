@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,7 +24,7 @@ public class ProvisionRecoverySummary(IEnumerable<Provision> provisions)
     /// <summary>
     /// The specific provision related information for the recovered provisions
     /// </summary>
-    public IReadOnlyCollection<Provision> RecoveredProvisions { get; } = provisions?.ToArray() ?? [];
+    public IReadOnlyDictionary<Guid, Provision> RecoveredProvisions { get; } = provisions?.ToDictionary(provision => provision.Id) ?? [];
 
     #endregion
 }

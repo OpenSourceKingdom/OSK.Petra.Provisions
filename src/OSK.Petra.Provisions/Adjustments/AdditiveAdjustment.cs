@@ -1,7 +1,8 @@
+using OSK.Petra.Provisions.Models;
 using System;
 using System.Linq;
 
-namespace OSK.Petra.Provisions.Models;
+namespace OSK.Petra.Provisions.Adjustments;
 
 /// <summary>
 /// Create a flat adjustment for a expenditure or recovery calculation

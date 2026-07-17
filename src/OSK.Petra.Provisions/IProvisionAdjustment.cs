@@ -1,4 +1,6 @@
-namespace OSK.Petra.Provisions.Models;
+using OSK.Petra.Provisions.Models;
+
+namespace OSK.Petra.Provisions;
 
 /// <summary>
 /// An adustment that can be applied to a provision group before it is used in calculations

@@ -1,6 +1,7 @@
+using OSK.Petra.Provisions.Adjustments;
 using OSK.Petra.Provisions.Models;
 
-namespace OSK.Petra.Provisions.UnitTests.Models;
+namespace OSK.Petra.Provisions.UnitTests.Adjustments;
 
 public class AdditiveAdjustmentTests
 {

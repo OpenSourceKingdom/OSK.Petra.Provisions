@@ -24,10 +24,10 @@ public interface IProvisionSet : IEnumerable<Provision>
     void Add(Provision provision);
 
     /// <summary>
-    /// Subtracts a given provision from the provision set
+    /// Expends a given provision from the provision set
     /// </summary>
     /// <param name="provision">The provision to subtract</param>
-    void Subtract(Provision provision);
+    void Expend(Provision provision);
 
     /// <summary>
     /// Completely removes a provision from the provision set

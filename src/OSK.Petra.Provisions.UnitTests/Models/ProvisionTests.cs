@@ -97,13 +97,13 @@ public class ProvisionTests
 
     #endregion
 
-    #region Subtraction_ProvisionMinusAmount
+    #region Expend_ProvisionMinusAmount
 
     [Theory]
     [InlineData(100f, 30f, 70f)]
     [InlineData(100f, -20f, 120f)]
     [InlineData(50f, 50f, 0f)]
-    public void Subtraction_ProvisionMinusAmount_ReturnsProvisionWithReducedAmount(float amount1, float amount2, float expected)
+    public void Expend_ProvisionMinusAmount_ReturnsProvisionWithReducedAmount(float amount1, float amount2, float expected)
     {
         // Arrange
         var provision = new Provision(_testId, amount1);
@@ -120,7 +120,7 @@ public class ProvisionTests
     [InlineData(100f, 30f, 70f)]
     [InlineData(100f, -20, 120)]
     [InlineData(50f, 50f, 0f)]
-    public void Subtraction_AmountMinusProvision_ReturnsProvisionWithReducedAmount(float amount1, float amount2, float expected)
+    public void Expend_AmountMinusProvision_ReturnsProvisionWithReducedAmount(float amount1, float amount2, float expected)
     {
         // Arrange
         var provision = new Provision(_testId, amount2);

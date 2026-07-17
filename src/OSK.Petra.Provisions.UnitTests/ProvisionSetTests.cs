@@ -131,36 +131,36 @@ public class ProvisionSetTests
 
     #endregion
 
-    #region Subtract
+    #region Expend
 
     [Fact]
-    public void Subtract_NewProvisionId_SetsNegativeAmount()
+    public void Expend_NewProvisionId_SetsNegativeAmount()
     {
         // Arrange
         var set = new ProvisionSet();
 
         // Act
-        set.Subtract(new Provision(_id1, 50f));
+        set.Expend(new Provision(_id1, 50f));
 
         // Assert
         Assert.Equal(-50f, set[_id1].Amount);
     }
 
     [Fact]
-    public void Subtract_ExistingProvisionId_ReducesAmount()
+    public void Expend_ExistingProvisionId_ReducesAmount()
     {
         // Arrange
         var set = new ProvisionSet([new Provision(_id1, 100f)]);
 
         // Act
-        set.Subtract(new Provision(_id1, 30f));
+        set.Expend(new Provision(_id1, 30f));
 
         // Assert
         Assert.Equal(70f, set[_id1].Amount);
     }
 
     [Fact]
-    public void Subtract_ReachesMinimum_RemoveAtMinimumTrue_RemovesFromSet()
+    public void Expend_ReachesMinimum_RemoveAtMinimumTrue_RemovesFromSet()
     {
         // Arrange
         var options = new ProvisionSetOptions
@@ -171,14 +171,14 @@ public class ProvisionSetTests
         var set = new ProvisionSet([new Provision(_id1, 100f)], options);
 
         // Act
-        set.Subtract(new Provision(_id1, 50f));
+        set.Expend(new Provision(_id1, 50f));
 
         // Assert
         Assert.False(set.Contains(_id1));
     }
 
     [Fact]
-    public void Subtract_ReachesMinimum_RemoveAtMinimumFalse_SetsToMinimum()
+    public void Expend_ReachesMinimum_RemoveAtMinimumFalse_SetsToMinimum()
     {
         // Arrange
         var options = new ProvisionSetOptions
@@ -189,7 +189,7 @@ public class ProvisionSetTests
         var set = new ProvisionSet([new Provision(_id1, 100f)], options);
 
         // Act
-        set.Subtract(new Provision(_id1, 50f));
+        set.Expend(new Provision(_id1, 50f));
 
         // Assert
         Assert.True(set.Contains(_id1));
@@ -197,7 +197,7 @@ public class ProvisionSetTests
     }
 
     [Fact]
-    public void Subtract_BelowMinimum_FloorsAtMinimum()
+    public void Expend_BelowMinimum_FloorsAtMinimum()
     {
         // Arrange
         var options = new ProvisionSetOptions
@@ -207,7 +207,7 @@ public class ProvisionSetTests
         var set = new ProvisionSet([new Provision(_id1, 50f)], options);
 
         // Act
-        set.Subtract(new Provision(_id1, 40f));
+        set.Expend(new Provision(_id1, 40f));
 
         // Assert
         Assert.Equal(30f, set[_id1].Amount);

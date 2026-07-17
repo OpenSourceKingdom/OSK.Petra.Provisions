@@ -52,14 +52,14 @@ public static class ProvisionSetExtensions
 
     #endregion
 
-    #region Subtraction
+    #region Expend
 
     /// <summary>
-    /// Subtracts a collection of provisions to the provision set
+    /// Expends a collection of provisions to the provision set
     /// </summary>
     /// <param name="set">The provisions being referenced as the provided resources</param>
     /// <param name="provisions">The provisions to subtract</param>
-    public static void Subtract(this IProvisionSet set, IEnumerable<Provision> provisions)
+    public static void Expend(this IProvisionSet set, IEnumerable<Provision> provisions)
     {
         if (provisions is null)
         {
@@ -68,7 +68,7 @@ public static class ProvisionSetExtensions
 
         foreach (var provision in provisions)
         {
-            set.Subtract(provision);
+            set.Expend(provision);
         }
     }
 
@@ -103,7 +103,7 @@ public static class ProvisionSetExtensions
         summary = ProvisionCalculator.CalculateExpenditure(requiredProvisions, set);
         if (summary.Sufficient || force)
         {
-            set.Subtract(requiredProvisions);
+            set.Expend(requiredProvisions);
             return true;
         }
 
@@ -137,7 +137,7 @@ public static class ProvisionSetExtensions
 
         if (summary.Sufficient || force)
         {
-            set.Subtract(requiredProvisions);
+            set.Expend(requiredProvisions);
             return true;
         }
 

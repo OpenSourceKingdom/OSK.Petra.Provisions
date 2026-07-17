@@ -125,7 +125,7 @@ public class ProvisionSet: IProvisionSet
     }
 
     /// <inheritdoc/>
-    public void Subtract(Provision provision)
+    public void Expend(Provision provision)
     {
         if (!_provisions.TryGetValue(provision.Id, out var current))
         {

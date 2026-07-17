@@ -95,13 +95,12 @@ public static class ProvisionSetExtensions
     /// </summary>
     /// <param name="set">The provisions being referenced as the provided resources</param>
     /// <param name="requiredProvisions">The required provision amounts</param>
-    /// <param name="force">Whether the expense should occur, even if the expenditure wouldn't be fully sufficient</param>
     /// <param name="summary">The summary of the expenditure</param>
     /// <returns>Whether the required provisions were expensed from the set</returns>
-    public static bool TryExpend(this IProvisionSet set, IEnumerable<Provision> requiredProvisions, out ProvisionExpenditureSummary summary, bool force = false)
+    public static bool TryExpend(this IProvisionSet set, IEnumerable<Provision> requiredProvisions, out ProvisionExpenditureSummary summary)
     {
         summary = ProvisionCalculator.CalculateExpenditure(requiredProvisions, set);
-        if (summary.Sufficient || force)
+        if (summary.Sufficient)
         {
             set.Expend(requiredProvisions);
             return true;
@@ -117,11 +116,10 @@ public static class ProvisionSetExtensions
     /// <param name="providedProvisionAdjustments">The adjustments to apply to the provided amounts</param>
     /// <param name="requiredProvisions">The required provision amounts</param>
     /// <param name="requiredProvisionAdjustments">The adjustments to apply to the required amounts</param>
-    /// <param name="force">Whether the expense should occur, even if the expenditure wouldn't be fully sufficient</param>
     /// <param name="summary">The summary of the expenditure</param>
     /// <returns>Whether the required provisions were expensed from the set</returns>
     public static bool TryExpend(this IProvisionSet set, IEnumerable<IProvisionAdjustment> providedProvisionAdjustments, IEnumerable<Provision> requiredProvisions,
-        IEnumerable<IProvisionAdjustment> requiredProvisionAdjustments, out ProvisionExpenditureSummary summary, bool force = false)
+        IEnumerable<IProvisionAdjustment> requiredProvisionAdjustments, out ProvisionExpenditureSummary summary)
     {
         summary = ProvisionCalculator.CalculateExpenditure(
             new ProvisionTerm()
@@ -135,7 +133,7 @@ public static class ProvisionSetExtensions
                 Adjustments = providedProvisionAdjustments
             });
 
-        if (summary.Sufficient || force)
+        if (summary.Sufficient)
         {
             set.Expend(requiredProvisions);
             return true;

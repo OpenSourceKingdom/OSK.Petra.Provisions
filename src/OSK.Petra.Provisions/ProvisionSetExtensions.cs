@@ -91,7 +91,61 @@ public static class ProvisionSetExtensions
     #region Expenditure
 
     /// <summary>
-    /// Calculates the expenditure summary using the provided provisions with the current resources as the required amounts.
+    /// Attempts to expense the required provisions from the set.
+    /// </summary>
+    /// <param name="set">The provisions being referenced as the provided resources</param>
+    /// <param name="requiredProvisions">The required provision amounts</param>
+    /// <param name="force">Whether the expense should occur, even if the expenditure wouldn't be fully sufficient</param>
+    /// <param name="summary">The summary of the expenditure</param>
+    /// <returns>Whether the required provisions were expensed from the set</returns>
+    public static bool TryExpend(this IProvisionSet set, IEnumerable<Provision> requiredProvisions, out ProvisionExpenditureSummary summary, bool force = false)
+    {
+        summary = ProvisionCalculator.CalculateExpenditure(requiredProvisions, set);
+        if (summary.Sufficient || force)
+        {
+            set.Subtract(requiredProvisions);
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Calculates the expenditure summary using the set with the required provisioning, including adjustments
+    /// </summary>
+    /// <param name="set">The provisions being referenced as the provided resources</param>
+    /// <param name="providedProvisionAdjustments">The adjustments to apply to the provided amounts</param>
+    /// <param name="requiredProvisions">The required provision amounts</param>
+    /// <param name="requiredProvisionAdjustments">The adjustments to apply to the required amounts</param>
+    /// <param name="force">Whether the expense should occur, even if the expenditure wouldn't be fully sufficient</param>
+    /// <param name="summary">The summary of the expenditure</param>
+    /// <returns>Whether the required provisions were expensed from the set</returns>
+    public static bool TryExpend(this IProvisionSet set, IEnumerable<IProvisionAdjustment> providedProvisionAdjustments, IEnumerable<Provision> requiredProvisions,
+        IEnumerable<IProvisionAdjustment> requiredProvisionAdjustments, out ProvisionExpenditureSummary summary, bool force = false)
+    {
+        summary = ProvisionCalculator.CalculateExpenditure(
+            new ProvisionTerm()
+            {
+                Provisions = requiredProvisions,
+                Adjustments = requiredProvisionAdjustments
+            }, 
+            new ProvisionTerm()
+            {
+                Provisions = set,
+                Adjustments = providedProvisionAdjustments
+            });
+
+        if (summary.Sufficient || force)
+        {
+            set.Subtract(requiredProvisions);
+            return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Calculates the expenditure summary using the set with the required provisions.
     /// </summary>
     /// <param name="set">The provisions being referenced as the provided resources</param>
     /// <param name="requiredProvisions">The required provision amounts</param>
@@ -100,7 +154,7 @@ public static class ProvisionSetExtensions
         => ProvisionCalculator.CalculateExpenditure(requiredProvisions, set);
 
     /// <summary>
-    /// Calculates the expenditure summary using the provided provisions with the current resources as the required amounts, with adjustments applied
+    /// Calculates the expenditure summary using the set with the required provisioning, including adjustments
     /// </summary>
     /// <param name="set">The provisions being referenced as the provided resources</param>
     /// <param name="providedProvisionAdjustments">The adjustments to apply to the provided amounts</param>
@@ -109,15 +163,16 @@ public static class ProvisionSetExtensions
     /// <returns>An expidenture summary between the provided and required provisions</returns>
     public static ProvisionExpenditureSummary CalculateExpenditure(IProvisionSet set, IEnumerable<IProvisionAdjustment> providedProvisionAdjustments, IEnumerable<Provision> requiredProvisions,
         IEnumerable<IProvisionAdjustment> requiredProvisionAdjustments)
-        => ProvisionCalculator.CalculateExpenditure(new ProvisionTerm()
-        {
-            Provisions = requiredProvisions,
-            Adjustments = requiredProvisionAdjustments
-        }, new ProvisionTerm()
-        {
-            Provisions = set,
-            Adjustments = providedProvisionAdjustments
-        });
+        => ProvisionCalculator.CalculateExpenditure(
+            new ProvisionTerm()
+            {
+                Provisions = requiredProvisions,
+                Adjustments = requiredProvisionAdjustments
+            }, new ProvisionTerm()
+            {
+                Provisions = set,
+                Adjustments = providedProvisionAdjustments
+            });
 
     #endregion
 

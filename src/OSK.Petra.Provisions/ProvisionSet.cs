@@ -97,6 +97,10 @@ public class ProvisionSet: IProvisionSet
     /// <inheritdoc/>
     public int Compare(IEnumerable<Provision> provisions, IAppraiser appraiser)
     {
+        if (provisions is null)
+        {
+            throw new ArgumentNullException(nameof(provisions));
+        }
         if (appraiser is null)
         {
             throw new ArgumentNullException(nameof(appraiser));
